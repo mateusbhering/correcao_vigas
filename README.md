@@ -1,41 +1,52 @@
-Rotina AutoLISP para padronização de objetos em projetos estruturais de vigas no AutoCAD. Desenvolvida para adequar elementos gerados por softwares de detalhamento (como o CAD/TQS) ao padrão de entrega do escritório.
+# correcao_vigas
 
-Funcionalidades
+Rotina AutoLISP para padronizacao de objetos em projetos estruturais de vigas no AutoCAD. Desenvolvida em ambiente profissional para adequar elementos gerados por softwares de detalhamento (CAD/TQS) ao padrao de entrega do escritorio, eliminando etapas manuais repetitivas no fluxo de producao de pranchas estruturais.
 
-Deleta layers desnecessários — remove automaticamente os layers ELE_REF_REF_NOME e ELE_COT_TEXTOS_ESTRIBOS
-Move cotas de armadura — desloca elementos do layer ELE_COT_COT_ARM 10 unidades para baixo
-Corrige altura de texto em cotas — normaliza a altura de dimensões no layer ELE_COT_COMPRIMENTO_PROJETADO de 10.0 para 0.01
-Padroniza textos (TEXT e MTEXT):
+## Impacto
 
-Aplica o estilo de fonte ROMANS (romans.shx)
-Define fator de largura em 0.95
-Ajusta alturas de texto: 13.333 → 12.5 e 16.667 → 18.0
-Formata strings de armadura removendo parênteses e padronizando separadores
+Reduziu em 50% o tempo de padronizacao de pranchas de vigas, automatizando correcoes que antes eram feitas manualmente objeto a objeto.
 
+## Funcionalidades
 
+- **Deleta layers desnecessarios** — remove automaticamente `ELE_REF_REF_NOME` e `ELE_COT_TEXTOS_ESTRIBOS`
+- **Move cotas de armadura** — desloca elementos do layer `ELE_COT_COT_ARM` 10 unidades para baixo
+- **Corrige altura de texto em cotas** — normaliza dimensoes no layer `ELE_COT_COMPRIMENTO_PROJETADO` de `10.0` para `0.01`
+- **Padroniza textos (TEXT e MTEXT)**
+  - Aplica estilo de fonte `ROMANS` (`romans.shx`)
+  - Define fator de largura em `0.95`
+  - Ajusta alturas: `13.333 → 12.5` e `16.667 → 18.0`
+  - Formata strings de armadura removendo parenteses e padronizando separadores
 
+## Requisitos
 
-Requisitos
+- AutoCAD com suporte a AutoLISP e Visual LISP (ActiveX)
+- Arquivo de fonte `romans.shx` disponivel no caminho de suporte do AutoCAD
 
-AutoCAD com suporte a AutoLISP e Visual LISP (ActiveX)
-Arquivo de fonte romans.shx disponível no caminho de suporte do AutoCAD
+## Como usar
 
-
-Como usar
-
-Carregue o arquivo no AutoCAD via APPLOAD ou arrastando o .lsp para a área de trabalho
-No prompt de comando, digite:
-
+1. Carregue o arquivo no AutoCAD via `APPLOAD` ou arrastando o `.lsp` para a area de trabalho
+2. No prompt de comando, execute:
+   ```
    MAQVIGAS
+   ```
+3. Selecione os objetos que deseja processar e pressione `Enter`
+4. A rotina sera aplicada e exibira confirmacao no prompt
 
-Selecione os objetos que deseja processar e pressione Enter
-A rotina será aplicada e exibirá a mensagem de confirmação no prompt
+## Transformacoes de texto
 
+A rotina aplica as seguintes substituicoes nas strings de texto:
 
-Transformações de texto
-A rotina aplica as seguintes substituições nas strings de texto:
-DeParaDescriçãox(xRemove parêntese após x)  Remove parêntese de fechamento seguido de espaço( ou )(vazio)Remove parênteses restanteseNNCorrige prefixo de bitolac= c=Adiciona espaço antes do espaçamento de estribo
+| De | Para | Descricao |
+|---|---|---|
+| `x(` | `x` | Remove parentese apos x |
+| `) ` | ` ` | Remove parentese de fechamento seguido de espaco |
+| `(` ou `)` | `` | Remove parenteses restantes |
+| `eN` | `N` | Corrige prefixo de bitola |
+| `c=` | ` c=` | Adiciona espaco antes do espacamento de estribo |
 
-Estrutura do arquivo
-maqvigas.lsp
-└── c:MAQVIGAS        ; comando principal
+## Estrutura
+
+```
+correcao_vigas/
+└── maqvigas.lsp       ; comando principal (c:MAQVIGAS)
+```
