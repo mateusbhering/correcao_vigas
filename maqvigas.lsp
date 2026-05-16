@@ -1,6 +1,6 @@
 (vl-load-com)
 
-(defun c:MAQVIGAS ( / ss i ent ed tipo lay alt txt obj)
+(defun c:MAQVIGAS ( / ss i ent ed tipo lay alt txt obj val rounded)
 
   (setq ss (ssget))
   (if (not ss)
@@ -35,26 +35,21 @@
               (vlax-3d-point '(0 -10 0))
             )
             ;; Arredondar valor da cota para múltiplo de 5 mais próximo
-            (if (= tipo "MTEXT")
+            (if (= tipo "DIMENSION")
               (progn
-                (setq obj (vlax-ename->vla-object ent))
-                (setq txt (vla-get-TextString obj))
-                (setq pos (vl-string-search ";" txt))
-                (if pos
-                  (progn
-                    (setq prefix (substr txt 1 (1+ pos)))
-                    (setq numstr (substr txt (+ pos 2)))
-                  )
-                  (progn
-                    (setq prefix "")
-                    (setq numstr txt)
-                  )
+                (setq txt (cdr (assoc 1 ed)))
+                (if (or (not txt) (= txt ""))
+                  (setq val (vla-get-Measurement (vlax-ename->vla-object ent)))
+                  (setq val (atof txt))
                 )
-                (setq val (atof numstr))
                 (if (> val 0)
                   (progn
                     (setq rounded (* 5 (fix (+ (/ val 5.0) 0.5))))
-                    (vla-put-TextString obj (strcat prefix (itoa (fix rounded))))
+                    (if (assoc 1 ed)
+                      (setq ed (subst (cons 1 (itoa (fix rounded))) (assoc 1 ed) ed))
+                      (setq ed (append ed (list (cons 1 (itoa (fix rounded))))))
+                    )
+                    (entmod ed)
                   )
                 )
               )
