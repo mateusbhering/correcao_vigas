@@ -34,9 +34,13 @@
               (vlax-3d-point '(0 0 0))
               (vlax-3d-point '(0 -10 0))
             )
-            ;; Arredondar valor da cota para múltiplo de 5 mais próximo
+            ;; Arredondar valor e descer texto da cota 10 unidades
             (if (= tipo "DIMENSION")
               (progn
+                ;; Atualizar ed após o vla-move para não reverter coordenadas
+                (setq ed (entget ent))
+
+                ;; Arredondar text override para múltiplo de 5 mais próximo
                 (setq txt (cdr (assoc 1 ed)))
                 (if (or (not txt) (= txt ""))
                   (setq val (vla-get-Measurement (vlax-ename->vla-object ent)))
@@ -49,9 +53,19 @@
                       (setq ed (subst (cons 1 (itoa (fix rounded))) (assoc 1 ed) ed))
                       (setq ed (append ed (list (cons 1 (itoa (fix rounded))))))
                     )
-                    (entmod ed)
                   )
                 )
+
+                ;; Descer texto 10 unidades (group code 21 = Y do texto)
+                (if (assoc 21 ed)
+                  (setq ed (subst
+                    (cons 21 (- (cdr (assoc 21 ed)) 10))
+                    (assoc 21 ed)
+                    ed
+                  ))
+                )
+
+                (entmod ed)
               )
             )
           )
