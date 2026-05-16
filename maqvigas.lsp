@@ -79,6 +79,18 @@
                 (setq txt (vl-string-subst " c=" "c=" txt))
                 (setq ed (subst (cons 1 txt) (assoc 1 ed) ed))
 
+                ;; Caso especial: remover "ou vista de muros"
+                (if (vl-string-search "ou vista de muros" (cdr (assoc 1 ed)))
+                  (progn
+                    (setq ed (subst (cons 1 "Ver esperas no detalhamento de pilares") (assoc 1 ed) ed))
+                    (setq ed (subst (cons 40 12.5) (assoc 40 ed) ed))
+                    (if (assoc 62 ed)
+                      (setq ed (subst (cons 62 4) (assoc 62 ed) ed))
+                      (setq ed (append ed (list (cons 62 4))))
+                    )
+                  )
+                )
+
                 (entmod ed)
               )
             )
@@ -105,6 +117,15 @@
                 (setq txt (vl-string-subst "N" "eN" txt))
                 (setq txt (vl-string-subst " c=" "c=" txt))
                 (vla-put-TextString obj txt)
+
+                ;; Caso especial: remover "ou vista de muros"
+                (if (vl-string-search "ou vista de muros" (vla-get-TextString obj))
+                  (progn
+                    (vla-put-TextString obj "Ver esperas no detalhamento de pilares")
+                    (vla-put-Height obj 12.5)
+                    (vla-put-Color obj 4)
+                  )
+                )
               )
             )
 

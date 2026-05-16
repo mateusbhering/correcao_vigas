@@ -1,0 +1,11 @@
+# Arquivos DXF/DWG (arquivos CAD de teste)
+*.dxf
+*.dwg
+*.bak
+
+# AutoCAD temporários
+*.sv$
+*.ac$
+
+# Claude Code
+.claude/
