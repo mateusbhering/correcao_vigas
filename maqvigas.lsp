@@ -28,10 +28,37 @@
 
         ;; MOVER ELE_COT_COT_ARM
         (if (= lay "ELE_COT_COT_ARM")
-          (vla-move
-            (vlax-ename->vla-object ent)
-            (vlax-3d-point '(0 0 0))
-            (vlax-3d-point '(0 -10 0))
+          (progn
+            (vla-move
+              (vlax-ename->vla-object ent)
+              (vlax-3d-point '(0 0 0))
+              (vlax-3d-point '(0 -10 0))
+            )
+            ;; Arredondar valor da cota para múltiplo de 5 mais próximo
+            (if (= tipo "MTEXT")
+              (progn
+                (setq obj (vlax-ename->vla-object ent))
+                (setq txt (vla-get-TextString obj))
+                (setq pos (vl-string-search ";" txt))
+                (if pos
+                  (progn
+                    (setq prefix (substr txt 1 (1+ pos)))
+                    (setq numstr (substr txt (+ pos 2)))
+                  )
+                  (progn
+                    (setq prefix "")
+                    (setq numstr txt)
+                  )
+                )
+                (setq val (atof numstr))
+                (if (> val 0)
+                  (progn
+                    (setq rounded (* 5 (fix (+ (/ val 5.0) 0.5))))
+                    (vla-put-TextString obj (strcat prefix (itoa (fix rounded))))
+                  )
+                )
+              )
+            )
           )
         )
 
